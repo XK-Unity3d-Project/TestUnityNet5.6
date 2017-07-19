@@ -28,12 +28,6 @@ public class MyNetworkManager : MonoBehaviour
 		{
 			SetupClient();
 		}
-
-		if (Input.GetKeyDown(KeyCode.B))
-		{
-			SetupServer();
-			SetupLocalClient();
-		}
 	}
 
 	void OnGUI()
@@ -42,34 +36,36 @@ public class MyNetworkManager : MonoBehaviour
 		{
 			return;
 		}
-		GUI.Label(new Rect(2, 10, 150, 100), "Press S for server");     
-		GUI.Label(new Rect(2, 30, 150, 100), "Press B for both");       
-		GUI.Label(new Rect(2, 50, 150, 100), "Press C for client");
+
+		GUI.Label(new Rect(2, 10, 150, 100), "Press S for server");
+		GUI.Label(new Rect(2, 30, 150, 100), "Press C for client");
 	}
 
 	// Create a server and listen on a port
-	public void SetupServer()
+	public void SetupServer(byte key = 0)
 	{
 		//Debug.Log("isNetworkActive " + netManager.isNetworkActive);
 		if (netManager.isNetworkActive) {
 			return;
 		}
-		netManager.StartHost();
+
+		switch (key) {
+			case 0:
+				//创建服务器,同时在服务器也可以产生主角.
+				netManager.StartHost();
+				break;
+			case 1:
+				//创建服务器,同时在服务器不产生主角.
+				netManager.StartServer();
+				break;
+		}
+
 	}
 
 	// Create a client and connect to the server port
 	public void SetupClient()
 	{
-		myClient = new NetworkClient();
-		myClient.RegisterHandler(MsgType.Connect, OnConnected);     
-		myClient.Connect("127.0.0.1", 4444);
-	}
-
-	// Create a local client and connect to the local server
-	public void SetupLocalClient()
-	{
-		myClient = ClientScene.ConnectLocalServer();
-		myClient.RegisterHandler(MsgType.Connect, OnConnected);
+		netManager.StartClient();
 	}
 
 	// client function
