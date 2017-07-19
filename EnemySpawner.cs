@@ -10,6 +10,7 @@ public class EnemySpawner : NetworkBehaviour
 
 	public override void OnStartServer()
 	{
+		Debug.Log("OnStartServer...");
 		for (int i=0; i < numberOfEnemies; i++)
 		{
 			var spawnPosition = new Vector3(

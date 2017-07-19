@@ -21,7 +21,7 @@ public class MyNetworkManager : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.S))
 		{
-			SetupServer();
+			SetupServer(0);
 		}
 
 		if (Input.GetKeyDown(KeyCode.C))
@@ -66,11 +66,5 @@ public class MyNetworkManager : MonoBehaviour
 	public void SetupClient()
 	{
 		netManager.StartClient();
-	}
-
-	// client function
-	public void OnConnected(NetworkMessage netMsg)
-	{
-		Debug.Log("Connected to server");
 	}
 }
