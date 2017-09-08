@@ -7,7 +7,14 @@ public class EnemyControllers : NetworkBehaviour
 {
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
-
+    Transform BulletListTr;
+    public ObjectListManage ObjListManage = new ObjectListManage();
+    void Start()
+    {
+        GameObject obj = new GameObject();
+        obj.name = name + "BulletList";
+        BulletListTr = obj.transform;
+    }
 	// Update is called once per frame
 	void Update()
 	{
@@ -22,23 +29,27 @@ public class EnemyControllers : NetworkBehaviour
 		}
 		CmdFire(2f);
 	}
-
-	[Command]
+    [Command]
 	void CmdFire(float timeVal)
 	{
-		// Create the Bullet from the Bullet Prefab
-		var bullet = (GameObject)Instantiate(
-			bulletPrefab,
-			bulletSpawn.position,
-			bulletSpawn.rotation);
-
-		// Add velocity to the bullet
-		bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
+        GameObject bullet = ObjListManage.FindObjectFromList();
+        if (bullet == null)
+        {
+            // Create the Bullet from the Bullet Prefab
+            bullet = (GameObject)Instantiate( bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+            bullet.transform.parent = BulletListTr;
+            ObjListManage.AddObjectToList(bullet);
+        }
+        else
+        {
+            bullet.transform.position = bulletSpawn.position;
+            bullet.transform.rotation = bulletSpawn.rotation;
+        }
 
 		// Spawn the bullet on the Clients
 		NetworkServer.Spawn(bullet);
-
-		// Destroy the bullet after 2 seconds
-		Destroy(bullet, timeVal);        
-	}
+        Bullet bulletCom = bullet.GetComponent<Bullet>();
+        bulletCom.InitBulletInfo(this);
+        bulletCom.MoveBullet(6f);
+    }
 }

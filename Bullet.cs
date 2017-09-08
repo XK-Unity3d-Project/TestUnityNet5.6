@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-	void OnCollisionEnter(Collision collision)
+    float TimeSpawn = 0f;
+    EnemyControllers EnemyCom;
+    Rigidbody Rig;
+    void OnCollisionEnter(Collision collision)
 	{
 		//Debug.Log("OnCollisionEnter...");
 		var hit = collision.gameObject;
@@ -13,6 +16,46 @@ public class Bullet : MonoBehaviour
 		{
 			health.TakeDamage(10);
 		}
-		Destroy(gameObject);
-	}
+        DestroyThis();
+    }
+    void Update()
+    {
+        if (Time.time - TimeSpawn < 2f)
+        {
+            return;
+        }
+        DestroyThis();
+    }
+    public void InitBulletInfo(EnemyControllers enemyScript = null)
+    {
+        EnemyCom = enemyScript;
+        TimeSpawn = Time.time;
+    }
+    public void MoveBullet(float speed)
+    {
+        if (Rig == null)
+        {
+            Rig = GetComponent<Rigidbody>();
+        }
+        Rig.isKinematic = false;
+        Rig.velocity = transform.forward * 6;
+    }
+    void DestroyThis()
+    {
+        try
+        {
+            if (EnemyCom != null)
+            {
+                EnemyCom.ObjListManage.CloseObjectInfoFromList(gameObject);
+                Rig.velocity = Vector3.zero;
+                Rig.isKinematic = true;
+                transform.position = new Vector3(0f, -99999f, 0f);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Unity: -> " + ex);
+            throw;
+        }
+    }
 }
