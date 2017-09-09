@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     float TimeSpawn = 0f;
+    bool IsDestoryObj = false;
     EnemyControllers EnemyCom;
     Rigidbody Rig;
     void OnCollisionEnter(Collision collision)
@@ -20,7 +21,7 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
-        if (Time.time - TimeSpawn < 2f)
+        if (Time.time - TimeSpawn < 2f || IsDestoryObj)
         {
             return;
         }
@@ -37,6 +38,7 @@ public class Bullet : MonoBehaviour
         {
             Rig = GetComponent<Rigidbody>();
         }
+        IsDestoryObj = false;
         Rig.isKinematic = false;
         Rig.velocity = transform.forward * 6;
     }
@@ -44,6 +46,7 @@ public class Bullet : MonoBehaviour
     {
         try
         {
+            IsDestoryObj = true;
             if (EnemyCom != null)
             {
                 EnemyCom.ObjListManage.CloseObjectInfoFromList(gameObject);
